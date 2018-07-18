@@ -615,6 +615,10 @@ input, select, textarea {
 			display: none;
 		}
 
+.newLine {
+		    clear: both; display: block; position: relative; 
+		}
+
 /* Image */
 
 	.image {
@@ -1310,6 +1314,10 @@ input, select, textarea {
 				letter-spacing: 0.2rem;
 				font-size: 0.8rem;
 				line-height: 2;
+			}
+			
+			#header .content .inner .desc {
+			    text-align: justify;
 			}
 
 		#header nav ul {
