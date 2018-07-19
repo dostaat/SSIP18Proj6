@@ -615,10 +615,6 @@ input, select, textarea {
 			display: none;
 		}
 
-.newLine {
-		    clear: both; display: block; position: relative; 
-		}
-
 /* Image */
 
 	.image {
@@ -1644,3 +1640,12 @@ input, select, textarea {
 		body.is-preload #footer {
 			opacity: 0;
 		}
+		
+	
+	.newLine {
+		    clear: both; display: block; position: relative; 
+		}
+		
+    .desc   {
+			    text-align: justify;
+			}

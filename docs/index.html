@@ -36,16 +36,16 @@ at least basic emotions should be identified (i.e. neutral, happy, sad, surprise
 <br><b>Remarks:</b> 
 difficulty – high; 
 Any suggestions as of how could one distinguish from video only between mouth change during speech and emotion?
- <a href="https://box.medunigraz.at/s/59gHxLYnGHfHfgA?">Source</a> of description.</p>
+ <a href="https://ssip2018.medunigraz.at/">Source</a> of description.</p>
 							</div>
 						</div>
 						<nav>
 							<ul>
 								<li><a href="#intro">Task</a></li>
-								<li><a href="#algorithms">Algorithms</a></li>
-								<li><a href="#prog">Programming</a></li>
-								<li><a href="#results">Results</a></li>
-                                <li><a href="#refs">References</a></li>
+								<li><a href="#data">Dataset</a></li>
+								<li><a href="#features">Features</a></li>
+                                <li><a href="#program">Program</a></li>
+								<li><a href="#stats">Statistics</a></li>
 								<li><a href="#members">Members</a></li>
 								
 								<!--<li><a href="#elements">Elements</a></li>-->
@@ -58,25 +58,144 @@ Any suggestions as of how could one distinguish from video only between mouth ch
 
 						<!-- Intro -->
 							<article id="intro">
-								<h2 class="major">Specification</h2>
-								<span class="image main"><img src="images/pic01.jpg" alt="" /></span>
-								<p>Aenean ornare velit lacus, ac varius enim ullamcorper eu. Proin aliquam facilisis ante interdum congue. Integer mollis, nisl amet convallis, porttitor magna ullamcorper, amet egestas mauris. Ut magna finibus nisi nec lacinia. Nam maximus erat id euismod egestas. By the way, check out my <a href="#work">awesome work</a>.</p>
-								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis dapibus rutrum facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam tristique libero eu nibh porttitor fermentum. Nullam venenatis erat id vehicula viverra. Nunc ultrices eros ut ultricies condimentum. Mauris risus lacus, blandit sit amet venenatis non, bibendum vitae dolor. Nunc lorem mauris, fringilla in aliquam at, euismod in lectus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In non lorem sit amet elit placerat maximus. Pellentesque aliquam maximus risus, vel sed vehicula.</p>
+								<h2 class="major">Task</h2>
+								<p><b>Idea and approach</b><br>
+Main idea was to find mouth on image and try to use convolutional neural network to classify emotions on images. However, lack of data and short deadlines changed approach to something simpler. It was decided to use landmarks of characteristic parts of mouth and based on features that was extracted from those landmarks classify emotions with some simpler methods such as Random forest, Naive Bayes, Decision Tree and K-Nearest Neighbour. 
+                            <br></p>
+                            <p><b>Workflow</b><br>
+                            Project workflow main steps:
+    <ul>
+                            <li>Collecting the dataset</li>
+                            <li>Detect mouth landmarks</li>
+                            <li>Feature extracting</li>
+                            <li>Training the alghorithm</li>
+                            <li>Statistic evaluation on algorithms</li>
+                            <li>Building application</li>
+                            </ul>
+                    
+                            <span class="image main"><img src="images/task/workflow.png" alt="workflow" /></span>
+
+</p>
+							</article>
+                        
+                        <!-- Dataset -->
+							<article id="data">
+								<h2 class="major">Dataset</h2>
+								<p>First step in workflow was to gather data for algorithm training. This task was done in two different steps:
+                                <ol>
+                                <li>Searching and downloading existing datasets that contains face images and emotion labels.</li>
+                                <li>Manually searching and labeling images.</li>
+                                </ol>
+                                <b>Existing datasets</b>
+                                <br>There are several existing datasets that contains face images and emotion labels for them, yet only one dataset was available  to download for free. Available dataset can be downloaded from the following <a href="http://cseweb.ucsd.edu/~gary/CAFE/">website</a> .
+It contains 139 labeled images in eight emotions categories. Among that categories are also 4 categories that are detected in this project:
+                                <ul>
+                                <li>Anger</li>
+                                <li>Happiness</li>
+                                <li>Sadness</li>
+                                <li>Normal resting face</li>
+                                </ul>                                
+								<span class="image main"><img src="images/dataset/37-35-40.png" alt="" /></span>
+								After removing images that doesn’t contain required emotions only 90 images was left from this dataset. Since this number of images was not enough, other images were needed to be acquired manually. 
+                                </p>                            
+								<p><b>Manually searching and labeling images</b><br>
+								With process of manually searching and labeling images another 110 pictures were collected making projects dataset contains 200 images in total. Process of manually searching and labeling images is simple but laborious: seeking for images on google, downloading them and correctly labeling them. 
+								                                
+								<span class="image main"><img src="images/dataset/faces.jpg" alt="" /></span>
+								</p>
+							</article>
+							
+                        <!-- Features -->
+							<article id="features">
+								<h2 class="major">Features</h2>
+								<p><b>Mouth detection</b><br>Mouth detection is a crucial part of this project. After searching the web, we agreed to use face recognition with 68 landmarks from dlib library.		
+								<span class="image main"><img src="images/features/landmarks.jpg" alt="" /></span>
+								Dlib library uses Histogram of Oriented gradients algorithm which was trained on <a href="https://ibug.doc.ic.ac.uk/resources/facial-point-annotations/">iBUG 300-W dataset</a>. More about histogram of oriented gradients can be found <a href="http://mccormickml.com/2013/05/09/hog-person-detector-tutorial/">here</a>. After detection of all 68 landmarks, only landmarks from 48 to 68 were recorded because those landmarks describe mouth. Next step is to see how this 20 landmarks describe each emotion and extract features that do the best distinguish between them.  							
+								</p>
+								<p><b>Features</b>
+								<ol>
+                                <li>Area - detect opened mouth <span class="image main"><img src="images/features/2_Area_mouth_box2.png" alt="" /></span></li>
+                                <li>MSE - detect opened mouth <span class="image main"><img src="images/features/3_MSE_open_mouth.png" alt="" /></span></li>
+                                <li>Curvativie 1. - detect smile mouth  <span class="image main"><img src="images/features/4_curvature1_smile.png" alt="" /></span></li>
+                                <li>Curvativie 2. - detect sad mouth  <span class="image main"><img src="images/features/5_curvature2_sad.png" alt="" /></span></li>
+                                <li>Corners - detect corners for neutral or sad  <span class="image main"><img src="images/features/6_corners_neutral-sad.png" alt="" /></span></li>
+                                <li>General shape - detect sad or neutral or angry <span class="image main"><img src="images/features/7_general_shape_sad-neutral-angry.png" alt="" /></span></li>
+                                <li>Scaled distances - detect distances <span class="image main"><img src="images/features/8_distances_scale.png" alt="" /></span></li>
+								</ol>
+								Based on this features, algorithm were trained.
+								</p>
+							</article>
+                        
+						<!-- Program -->
+							<article id="program">
+								<h2 class="major">Program</h2>
+								<span class="image left"><img src="images/program/pycon.png" alt="" /></span>
+								<p>All coding in this project was done in program language Python (v 2.7.12). Main reason is that Dlib library for mouth feature extraction is supported in Python, C and C++ program languages. Taking into consideration short project deadline, Python was better choice than C and C++. (All source code is available at link)<br><br><br>During the project several program scripts were created:
+                                <ol>
+                                <li>webcamDetector.py</li>
+                                <li>extractFeatures.py</li>
+                                <li>trainAlgorithms.py</li>
+                                <li>testIt.py</li>
+                                <li>statistics.py</li>
+                                <li>confusionPlot.py</li>
+                                </ol></p>
+                                <p><b>webcamDetector.py</b><br>
+                                This is the main application of project that uses all knowledge that project provided. Main goal of this application is to detect emotions of multiple humans from real time webcam stream. Application requires tree files: 
+                                <ol>
+                                <li>“features.txt” - file containing features for detection algorithm training</li>
+                                <li>“labels.csv”- file containing labels for detection algorithm training</li>
+                                <li>“shape_predictor_68_face_landmarks.dat” - file conating landmarks for mouth detection</li>
+                                </ol>
+                                <span class="image main"><img src="images/program/h-s-n-a.png" alt="" /></span>
+                                </p>                                
+								<p class="desc"><b>extractFeatures.py</b><br>This script generate “features.txt” file. It uses images as input, detect mouth on them and then calculate features of the mouth. Features are saved to file for each image in one line separated by commas. Script requires file “shape_predictor_68_face_landmarks.dat”.
+								</p>
+								<p><b>trainAlgorithms.py</b><br>This script trains algorithms and writes statistics. Algorithms trained are Random forest, Decision tree, Naive Bayes and K-nearest neighbours. Their performances are averaged on 100 tests on dataset that is splitted in ratio 80:20 (training:test). Also performance statistic is  written for each and every algorithm. Script requires “features.txt” and “labels.csv” files.
+								</p>
+								<p><b>testIt.py</b><br>This is a simple application to test human performance on images of mouths. Input files are images, emotion labels for images and “shape_predictor_68_face_landmarks.dat” file. Application crops the mouth from the image, displays it to the subject and writes his answer to simple “&lt;number of tester&gt;.csv” file. Answers are separated by commas. The correct answers for the images are written in first line of file.
+								</p>
+								<p><b>statistics.py</b><br>This scripts takes subjects’ and machines’ answers and generate confusion matrices for them. Subjects’ answers are provided in the “.csv” files generated by the “testIt.py” script. However machines’ answers are calculated ad hoc (“features.txt” and  “labels.txt” files must be provided).
+								</p>
+								<p><b>confusionPlot.py</b><br>This script plots provided confusion matrix.</p>
 							</article>
 
-						<!-- Results -->
-							<article id="results">
-								<h2 class="major">Results</h2>
-								<span class="image main"><img src="images/pic02.jpg" alt="" /></span>
-								<p>Adipiscing magna sed dolor elit. Praesent eleifend dignissim arcu, at eleifend sapien imperdiet ac. Aliquam erat volutpat. Praesent urna nisi, fringila lorem et vehicula lacinia quam. Integer sollicitudin mauris nec lorem luctus ultrices.</p>
-								<p>Nullam et orci eu lorem consequat tincidunt vivamus et sagittis libero. Mauris aliquet magna magna sed nunc rhoncus pharetra. Pellentesque condimentum sem. In efficitur ligula tate urna. Maecenas laoreet massa vel lacinia pellentesque lorem ipsum dolor. Nullam et orci eu lorem consequat tincidunt. Vivamus et sagittis libero. Mauris aliquet magna magna sed nunc rhoncus amet feugiat tempus.</p>
-							</article>
-
-						<!-- References -->
-							<article id="refs">
-								<h2 class="major">References</h2>
-								<span class="image main"><iframe width="560" height="315" src="https://www.youtube.com/embed/K4u4Dpl6NKk" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></span>
-								<p>Lorem ipsum dolor sit amet, consectetur et adipiscing elit. Praesent eleifend dignissim arcu, at eleifend sapien imperdiet ac. Aliquam erat volutpat. Praesent urna nisi, fringila lorem et vehicula lacinia quam. Integer sollicitudin mauris nec lorem luctus ultrices. Aliquam libero et malesuada fames ac ante ipsum primis in faucibus. Cras viverra ligula sit amet ex mollis mattis lorem ipsum dolor sit amet.</p>
+						<!-- Statistics -->
+							<article id="stats">
+								<h2 class="major">Statistics and conclusion</h2>
+								<h3>Statistics</h3>
+								<p>There are two major statistical evaluations in this project:
+								<ol>
+								<li>Evaluation of the algorithms.</li>
+								<li>Evaluation between subjects’ performance and machines’ performance.</li>
+								</ol>
+								</p>
+								<p><b>Evaluation of the algorithms</b><br>
+								Script “trainAlgorithms.py” provides accuarcy for each of the four trained algorithms:
+Random forest, Decision tree, K-nearest neighbours and Naive Bayes. Following graph provides their average results 100 training cycles:
+                                <span class="image main"><img src="images/stats/TreningAlghoritms.jpg" alt=""/></span>
+								As it can be noticed, the best algorithm is Random forest. Therefore, Random forest is used in webcamDetector application and for further evaluation against subjects’ performance. Confusion matrix for Random forest algorithm is shown on next graph:
+								 <span class="image main"><img src="images/stats/TrainingCF.png" alt=""/></span>
+								</p>
+								<p><b>Evaluation between subjects’ performance and machines’ performance</b><br>
+								Evaluation between subjects’ performance and machines’ performance is done between 7 test subjects on 19 images that express all 4 different emotions and Random forest algorithm that was previously trained. In next histogram it is shown that subjects performed roughly 6% better than the machine. 
+                                <span class="image main"><img src="images/stats/Machine-Human.jpg" alt=""/></span>
+                                Also here are confusion matrices for subjects’ performance and machines’ performance:
+                                <span class="image main"><img src="images/stats/humanCF.png" alt=""/></span>
+                                <span class="image main"><img src="images/stats/algCF.png" alt=""/></span>
+								</p>
+								<p><h3>Conclusion</h3>
+								There are three reasons why algorithm did not perform well:
+								<ul>
+								<li>Small dataset, probably if dataset was bigger, algorithm will generalise better.</li>
+                                <li>Task is really hard, even human struggled on detecting emotion from the mouth images.</li>
+                                <li>Features that are describing mouth are made up really quickly and on spot. Therefore, there might be some other features that will distinguish between emotions even better.</li>
+								</ul>
+								Sad:  <span class="image main"><img src="images/stats/Face-Mouth_1.jpg" alt=""/></span>
+								Angry: <span class="image main"><img src="images/stats/Face-Mouth_2.jpg" alt=""/></span>
+								</p>
+								<p><h2>Futurework</h2>
+								To improve detection of emotions based on mouth shape it is important to gather more data and extract features that are based not only on shape but also on the colour. Convolutional neural network could be a good solution. Also proposed solution for problem to detect emotion for talking person lays into measuring emotions during several frames of video and than calculate average emotion. People never use emotion only for a glimpse of a second.
+								</p>
 							</article>
 
                         <!-- Members -->
@@ -84,14 +203,19 @@ Any suggestions as of how could one distinguish from video only between mouth ch
 								<h2 class="major">Members</h2>
 								<div class="newLine">
 								<span class="image left"><img src="images/members/franko.jpg" alt="" /></span>
-								<a href="https://www.facebook.com" class="icon fa-facebook"><span class="label"></span></a>
-								<p><br><b>Franko Hržić</b><br>Few words about.</p>
+								<p><br><b>Franko Hržić</b>
+								<br>
+								<br>University of Rijeka Faculty of Engineering
+								<br>Mag.ing.comp.
+                                <br>fhrzic@riteh.hr
+								</p>								
 								</div>
 								
 								<div class="newLine">
 								<span class="image right"><img src="images/members/martin.jpg" alt="" /></span>
-								<a href="https://www.facebook.com" class="icon fa-facebook"><span class="label"></span></a>
-								<p><br><b>Martin Polzhofer</b><br>Few words about.</p>
+								<p><br><b>Martin Polzhofer</b>
+								<br>Medical University of Graz
+                                <br>martin(dot)polzhofer[at]stud.medunigraz.at </p>
 								</div>
 								
 								<div class="newLine">
